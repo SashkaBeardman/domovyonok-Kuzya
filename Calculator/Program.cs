@@ -16,13 +16,16 @@ Console.Write("Введите действие (+, -, *, /): ");
             Console.WriteLine($"{a}+{b} = {a + b}");
             break;
         case '-':
-            Console.WriteLine($"{a}-{b} = {a -+ b}");
+            Console.WriteLine($"{a}-{b} = {a - b}");
         break;
         case '*':
             Console.WriteLine($"{a}*{b} = {a * b}");
         break;
         case '/':
-            Console.WriteLine($"{a}/{b} = {a / b}");
+        if (b==0)
+            Console.WriteLine("Ошибка: Деление на 0 невозможно.");
+        else
+        Console.WriteLine($"{a}/{b} = {a / b}");
         break;
         default:
             Console.WriteLine("Ошибка, введен некорректный знак математической операции");
