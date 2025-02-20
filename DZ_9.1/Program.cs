@@ -17,9 +17,7 @@ for (int k = 0; k < MyltiLineFilter.GetLength(0); k++)
 };
 //Второе по величине значение
 int max = int.MinValue;
-int min = int.MaxValue;
 int secondLargest = int.MinValue;
-int NumValues = SizeArray * SizeArray;
 foreach (int num in MyltiLineFilter)
 {
     if (num > max)
