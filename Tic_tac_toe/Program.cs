@@ -1,86 +1,113 @@
-﻿using System.Numerics;
-using System.Xml;
+﻿using System;
 
-    bool Game = true;
-    char Player = 'X';
+class TicTacToe
+{
+    static int size = 5;
+    static char[,] board = new char[size, size];
+    static char[] players = { 'X', 'O', '△', '□' }; // Символы для 3-4 игроков
+    static int playerCount;
 
-    char[] field = { '1', '2', '3', '4', '5', '6', '7', '8', '9' };
-    int attempts = field.Length;//длинна массива
+    static void Main()
+    {
+        Console.Write("Введите количество игроков (3 или 4): ");
+        playerCount = Math.Clamp(Convert.ToInt32(Console.ReadLine()), 3, 4);
 
-    while (Game)
+        InitBoard();
+        PlayGame();
+    }
+
+    static void InitBoard()
+    {
+        for (int i = 0; i < size; i++)
+            for (int j = 0; j < size; j++)
+                board[i, j] = '.';
+    }
+
+    static void PlayGame()
+    {
+        int moves = 0;
+        bool gameWon = false;
+        while (moves < size * size)
+        {
+            PrintBoard();
+            char currentPlayer = players[moves % playerCount];
+
+            Console.WriteLine($"\nХод игрока {currentPlayer}. Введите координаты (ряд):");
+            int row = Convert.ToInt32(Console.ReadLine()) - 1;
+            Console.WriteLine($"\nХод игрока {currentPlayer}. Введите координаты (колонку):");
+            int col = Convert.ToInt32(Console.ReadLine()) - 1;
+
+            if (IsValidMove(row, col))
+            {
+                board[row, col] = currentPlayer;
+                moves++;
+
+                if (CheckWin(row, col, currentPlayer))
+                {
+                    PrintBoard();
+                    Console.WriteLine($"\n Игрок {currentPlayer} победил!");
+                    gameWon = true;
+                    break;
+                }
+            }
+            else
+            {
+                Console.WriteLine("Некорректный ход! Попробуйте снова.");
+            }
+        }
+
+        if (!gameWon)
+        {
+            PrintBoard();
+            Console.WriteLine("\nНичья!");
+        }
+    }
+
+    static bool IsValidMove(int row, int col)
+    {
+        return row >= 0 && row < size && col >= 0 && col < size && board[row, col] == '.';
+    }
+
+    static bool CheckWin(int row, int col, char player)
+    {
+        return CheckDirection(row, col, player, 1, 0) ||  // Горизонталь
+               CheckDirection(row, col, player, 0, 1) ||  // Вертикаль
+               CheckDirection(row, col, player, 1, 1) ||  // Диагональ \
+               CheckDirection(row, col, player, 1, -1);   // Диагональ /
+    }
+
+    static bool CheckDirection(int row, int col, char player, int dRow, int dCol)
+    {
+        int count = 1;
+        count += CountInDirection(row, col, player, dRow, dCol);
+        count += CountInDirection(row, col, player, -dRow, -dCol);
+        return count >= 4;
+    }
+
+    static int CountInDirection(int row, int col, char player, int dRow, int dCol)
+    {
+        int r = row + dRow, c = col + dCol, count = 0;
+        while (r >= 0 && r < size && c >= 0 && c < size && board[r, c] == player)
+        {
+            count++;
+            r += dRow;
+            c += dCol;
+        }
+        return count;
+    }
+
+    static void PrintBoard()
     {
         Console.Clear();
-        Console.WriteLine($"{field[0]} | {field[1]} | {field[2]} ");
-        Console.WriteLine("---------");
-        Console.WriteLine($"{field[3]} | {field[4]} | {field[5]} ");
-        Console.WriteLine("---------");
-        Console.WriteLine($"{field[6]} | {field[7]} | {field[8]} ");
-        Console.WriteLine($"Игрок '{Player}', введите номер ячейки (1-9):");
-
-    if (!int.TryParse(Console.ReadLine(), out int move) || move < 1 || move > 9)
-    {
-        Console.WriteLine("Некорректный ввод! Нажмите Enter и попробуйте снова.");
-        Console.ReadLine();
-        continue;
+        Console.WriteLine("\n  " + string.Join(" ", Enumerable.Range(1, size)));
+        for (int i = 0; i < size; i++)
+        {
+            Console.Write((i + 1) + " ");
+            for (int j = 0; j < size; j++)
+            {
+                Console.Write(board[i, j] + " ");
+            }
+            Console.WriteLine();
+        }
     }
-
-    int index = move - 1;
-
-    if (field[index] == 'X' || field[index] == 'O')
-    {
-        Console.WriteLine("Ячейка уже занята! Нажмите Enter и выберите другую.");
-        Console.ReadLine();
-        continue;
-    }
-    field[index] = Player;
-    attempts--;
-
-    if (field[0] == field[1] && field[1] == field[2])//Горизонталь 1
-        {
-            Console.WriteLine($"Игрок {field[0]} виграл!");
-            Game = false;
-        }
-        else if (field[3] == field[4] && field[4] == field[5])//Горизонталь 2
-        {
-            Console.WriteLine($"Игрок {field[3]} виграл!");
-            Game = false;
-        }
-        else if (field[6] == field[7] && field[7] == field[8])//Горизонталь 3
-        {
-            Console.WriteLine($"Игрок {field[6]} виграл!");
-            Game = false;
-        }
-        else if (field[0] == field[3] && field[3] == field[6])//Вертикаль 1
-        {
-            Console.WriteLine($"Игрок {field[0]} виграл!");
-            Game = false;
-        }
-        else if (field[1] == field[4] && field[4] == field[7])//Вертикаль 2
-        {
-            Console.WriteLine($"Игрок {field[1]} виграл!");
-            Game = false;
-        }
-        else if (field[2] == field[5] && field[5] == field[8])//Вертикаль 3
-        {
-            Console.WriteLine($"Игрок {field[2]} виграл!");
-            Game = false;
-        }else if (field[0] == field[4] && field[4] == field[8])//Диагональ 1
-        {
-            Console.WriteLine($"Игрок {field[0]} виграл!");
-            Game = false;
-        }else if (field[2] == field[4] && field[4] == field[6])//Диагональ 2
-        {
-            Console.WriteLine($"Игрок {field[2]} виграл!");
-            Game = false;
-        }
-        else if (attempts == 0)
-        {
-            Console.WriteLine("Ничья!");
-            Game = false;
-        }
-        else
-        {
-            Player = (Player == 'X') ? 'O' : 'X';
-        }
-
 }
