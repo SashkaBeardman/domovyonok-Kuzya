@@ -103,8 +103,8 @@ public class Cart
         foreach (var vegetable in cartItems)
         {
             Console.WriteLine($"{vegetable.Name}: {vegetable.Price} UAH.");
-            totalCost += vegetable.Price;
         }
+        totalCost = cartItems.Sum(v => v.Price);
         Console.WriteLine($"Общая стоимость корзины: {totalCost} UAH.");
     }
 }
