@@ -72,12 +72,15 @@
                                 }
                                 break;
                             case "4":
-                                Console.WriteLine($"Текущий счет: {selectedAccount.Name} ");
-                                Console.WriteLine("Введите номер счета для перевода(получателя): ");
+                                Console.WriteLine($"Текущий счет: {selectedAccount.Name}");
+                                Console.WriteLine("Введите номер счета для перевода (получателя):");
+
                                 for (int i = 0; i < accounts.Count; i++)
                                 {
-                                    Console.WriteLine($"{i + 1}. {accounts[i].Name}");
+                                    if (i != accountIndex - 1)
+                                        Console.WriteLine($"{i + 1}. {accounts[i].Name}");
                                 }
+
                                 if (int.TryParse(Console.ReadLine(), out int targetIndex) && targetIndex > 0 && targetIndex <= accounts.Count && targetIndex != accountIndex)
                                 {
                                     Console.Write("Введите сумму для перевода: ");
